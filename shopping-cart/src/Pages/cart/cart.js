@@ -29,9 +29,7 @@ export default function Cart() {
             <div className="card-body my-3">
               <h6 className="card-title h5 h4-sm">{product.title}</h6>
               <h6 className="card-text" style={{color:'green'}}>Rs:{product.price}</h6>
-              <div className="w-25 ">
-              <button className="btn btn-danger w-100" onClick={()=>handleRemove(product.id)}>Remove</button>
-              </div>
+              <button className="btn btn-danger w-30" onClick={()=>handleRemove(product.id)}>Remove</button>
             </div>
           </div>
         ))}

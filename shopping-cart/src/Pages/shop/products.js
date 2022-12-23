@@ -1,31 +1,45 @@
-import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import React, { useEffect } from "react";
+// import Axios from "axios";
 import "./products.css";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {add} from '../../Store/cartSlice';
+import { fetchProducts } from "../../Store/productsSlice";
+import {STATUSES} from '../../Store/productsSlice';
+
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
 
   const dispatch = useDispatch();
 
+  const {data:products, status} = useSelector((state) => state.product);
+
+
   useEffect(() => {
-    const fetchProducts = () => {
-      Axios.get("https://fakestoreapi.com/products", {
-        method: "GET",
-        mode: "no-cors",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        withCredentials: false,
-        credentials: "same-origin",
-      }).then((res) => {
-        setProducts(res.data);
-      });
-    };
-    fetchProducts();
-  }, []);
+    dispatch(fetchProducts());
+    // const fetchProducts = () => {
+    //   Axios.get("https://fakestoreapi.com/products", {
+    //     method: "GET",
+    //     mode: "no-cors",
+    //     headers: {
+    //       "Access-Control-Allow-Origin": "*",
+    //       "Content-Type": "application/json",
+    //     },
+    //     withCredentials: false,
+    //     credentials: "same-origin",
+    //   }).then((res) => {
+    //     setProducts(res.data);
+    //   });
+    // };
+    // fetchProducts();
+  }, [dispatch]);
+
+  if(status === STATUSES.LOADING){
+    return <h2 className="status" style={{marginTop:'70px'}}>Loading...</h2>
+  }
+
+  if(status === STATUSES.ERROR){
+    return <h2 className="status" style={{marginTop:'70px'}}>Something went wrong...</h2>
+  }
 
   const handleAdd = (product) =>{
     dispatch(add(product));
