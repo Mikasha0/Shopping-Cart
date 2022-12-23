@@ -1,20 +1,45 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-const initialState = [];
+const STATUSES = Object.freeze({
+    IDLE:'idle',
+    ERROR:'error',
+    LOADING:'loading',
+});
 
-const cartSlice = createSlice({
-    name:'cart',
-    initialState,
+const productSlice = createSlice({
+    name:'products',
+    initialState:{
+        data:[],
+        status:STATUSES.IDLE
+    },
     reducers:{
-        add(state,action){
-            state.push(action.payload);
+        setProducts(state,action){
+            state.data = action.payload;
         },
-        remove(state,action){
-            return state.filter((item)=>item.id !== action.payload)
+        setStatus(state,action){
+            state.status = action.payload;
         },
     },
 })
 
-export const {add, remove} = cartSlice.actions;
+export const {setProducts,setStatus} = productSlice.actions;
 
-export default cartSlice.reducer;
+export default productSlice.reducer;
+
+export function fetchProducts(){
+    return async function fetchProductThunk(dispatch,getState){
+        dispatch(setStatus(STATUSES.LOADING));
+        try{
+            const res = await fetch('https://fakestoreapi.com/products');
+            const data = await res.json();
+            dispatch(setProducts(data))
+            dispatch(setStatus(STATUSES.IDLE));
+        }catch(err){
+            console.log(err);
+            dispatch(setStatus(STATUSES.ERROR));
+        }
+    }
+}
+
+
+
